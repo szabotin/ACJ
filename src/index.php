@@ -8,6 +8,50 @@
 	{
 			die('Erreur : '.$e->getMessage());
 	}
+	// get the link of 2 pictures by choosing among the ones which have the same number of comparisons and the same score				
+					
+	// return to zero
+	//$req = $bdd->exec('UPDATE images SET score = 0, rounds = 0');
+			
+	// get the number of picture
+	$qnbpic = $bdd->query('SELECT COUNT(*) AS nbp FROM images') ; 
+	$nbpic = $qnbpic->fetch()['nbp'] ;
+				
+	$linkRight = "" ;
+	$linkLeft = "" ;
+					
+	/*$norounds = 3 ;
+	$nbvicmin = 0 ;
+	$nbvicmax = $nbpic - $nb ;*/
+				
+	// get the minimum of rounds
+	$response = $bdd->query('SELECT MIN(rounds) AS mini FROM images') ;
+	$mini = $response->fetch()['mini'] ; 
+					
+	// we have to have the number of images which are less compared
+	$req = $bdd->prepare('SELECT COUNT(*) AS nbmin FROM images WHERE rounds=?') ;
+	$req->execute(array($mini)) ;
+	$nb = $req->fetch()['nbmin'] ;
+					
+	if($nb == 1) { // we have to compare with one picture which has one more round 
+				
+	}
+	else { // compare images with the same score
+		// have the links which have the minimum of rounds
+		$req = $bdd->prepare('SELECT link, score FROM images WHERE rounds=? ORDER BY score LIMIT 0, 2') ;
+		$req->execute(array($mini)) ;
+					
+		$i = 1 ;
+						
+		while($resp = $req->fetch()) {
+			if ($i == 1)
+				$linkLeft = $resp['link'] ;
+			else
+				$linkRight = $resp['link'] ;
+			$i = $i + 1 ;
+		}
+	echo '<p class = "disp">' . $linkLeft, $linkRight. '<p>' ;	
+	}
 ?>
 
 <html lang = "fr">
@@ -25,103 +69,56 @@
 		</header>
 		<main>
 			<div class = "compareBox"> 
-				<?php // get the link of 2 pictures by choosing among the ones which have the same number of comparisons and the same score				
-					
-					// return to zero
-					$req = $bdd->exec('UPDATE images SET score = 0, rounds = 0');
-					
-					// get the number of picture
-					$qnbpic = $bdd->query('SELECT COUNT(*) AS nbp FROM images') ; 
-					$nbpic = $qnbpic->fetch()['nbp'] ;
-					
-					$linkRight = "" ;
-					$linkLeft = "" ;
-					$oldlR = "" ;
-					$oldlL = "" ;
-					
-					/*$norounds = 3 ;
-					$nbvicmin = 0 ;
-					$nbvicmax = $nbpic - $nb ;*/
-					
-					// get the minimum of rounds
-					$response = $bdd->query('SELECT MIN(rounds) AS mini FROM images') ;
-					$mini = $response->fetch()['mini'] ; 
-					
-					// we have to have the number of images which are less compared
-					$req = $bdd->prepare('SELECT COUNT(*) AS nbmin FROM images WHERE rounds=?') ;
-					$req->execute(array($mini)) ;
-					$nb = $req->fetch()['nbmin'] ;
-					
-					if($nb == 1) { // we have to compare with one picture which has one more round 
-						
-					}
-					else { // compare images with the same score
-						// have the links which have the minimum of rounds
-						$req = $bdd->prepare('SELECT link, score FROM images WHERE rounds=? ORDER BY score LIMIT 0, 2') ;
-						$req->execute(array($mini)) ;
-						
-						$i = 1 ;
-						
-						while($resp = $req->fetch()) {
-							if ($i == 1)
-								$linkLeft = $resp['link'] ;
-							else
-								$linkRight = $resp['link'] ;
-							$i = $i + 1 ;
-						}
-						echo '<p class = "disp">' . $linkLeft, $linkRight. '<p>' ;
-					}					
-				?>
 				<div class = "button" id = "boxLeft">
 					<img src="<?php echo $linkLeft ?>" id = "itemLeft"> </img>
 					<form method="POST" action="index.php" id="buttonLeft">
 						<input type="submit" name="b1" value="This One !">		
-						<?php // If click, will add 1 to the score of the item. 
-							
-							if(isset($_POST['b1'])){
-								echo '<p class = "disp">' . $oldlL . '<p>' ;
-								// getting the score
-								$getInfo = $bdd->prepare('SELECT score FROM images WHERE link=?') ; 
-								$getInfo->execute(array($oldlL)) ;
-								$info = $getInfo->fetch() ;
-								
-								
-								// increment the score
-								$req = $bdd->prepare('UPDATE images SET score = :s WHERE link = :l');
-								$req->execute(array('s' => $info['score']+1,
-													'l' => $oldlL)) ;
-								echo $info['score'] ;
-							}
-							$oldlL = $linkLeft ;
-						?>
 					</form>
+					<?php // If click, will add 1 to the score of the item. 
+						if(isset($_POST['b1'])){
+							
+							// getting the score
+							$getInfo = $bdd->prepare('SELECT score FROM images WHERE link=?') ; 
+							$getInfo->execute(array($linkLeft)) ;
+							$info = $getInfo->fetch() ;
+							
+							
+							// increment the score
+							$req = $bdd->prepare('UPDATE images SET score = :s WHERE link = :l');
+							$req->execute(array('s' => $info['score']+1,
+												'l' => $linkLeft)) ;
+							echo $info['score'] ;
+						}
+					?>
+					
 				</div>
 				
 				<div id = "boxRight">
 					<img src="<?php echo $linkRight ?>" id="itemRight"> </img>
 					<form method="POST" action="index.php" id="buttonRight">
 						<input type="submit" name="b2" value="This One !">
-						<?php // If click, will add 1 to the score of the item. 
-							
-							if(isset($_POST['b2'])){
-								echo '<p class = "disp">' . $oldlR . '<p>' ;
-								// getting the score
-								$getInfo = $bdd->prepare('SELECT score FROM images WHERE link=?') ; 
-								$getInfo->execute(array($oldlR)) ;
-								$info = $getInfo->fetch() ; 
-								
-								// increment the score
-								$req = $bdd->prepare('UPDATE images SET score = :s WHERE link = :l');
-								$req->execute(array('s' => $info['score'] + 1,
-													'l' => $oldlR)) ;
-								echo $info['score'] ;
-							}
-							$oldlR = $linkRight ;
-						?>
 					</form>
-				</div>
+					
+					<?php // If click, will add 1 to the score of the item. 
+						if(isset($_POST['b2'])){
+								
+							// getting the score
+							$getInfo = $bdd->prepare('SELECT score FROM images WHERE link=?') ; 
+							$getInfo->execute(array($linkRight)) ;
+							$info = $getInfo->fetch() ; 
+							
+							// increment the score
+							$req = $bdd->prepare('UPDATE images SET score = :s WHERE link = :l');
+							$req->execute(array('s' => $info['score'] + 1,
+												'l' => $linkRight)) ;
+							echo $info['score'] ;
+						}
+					?>
+				</div>		
+			</div>
+			<?php 
+				// Add one round to say that these two items have been compared
 				
-			<?php // Add one round to say that these two items have been compared
 				if(isset($_POST['b1']) OR isset($_POST['b2'])){
 					
 					// getting the 2 links we want to increment the number of rounds
@@ -131,13 +128,11 @@
 					while ($info = $getInfo->fetch()) { // just twice, because of two links
 						$req = $bdd->prepare('UPDATE images SET rounds = :r WHERE link = :l');
 						$req->execute(array('r' => $info['rounds'] + 1,
-														'l' => $info['link'])) ;
-						echo $info['rounds'] ;
+											'l' => $info['link'])) ;
 					}
 				}
 			?>
-			
-			</div>
+		
 		</main>
 		<script src="ACJ.js"></script>
 	</body>
