@@ -38,7 +38,7 @@ h2{
 	justify-content: center ;
 }
 
-#boxLeft {
+#boxLeft, #boxRight {
 	margin : /* top */ 0px /* right */ 0px/* bottom */ 0px /* left */ 0px ;
 	width : 49% ;
 	display: flex ;
@@ -46,39 +46,64 @@ h2{
 	justify-content: center ;
 }
 
-#itemLeft {
+#itemLeft, #itemRight {
 	margin : auto ;
 	width : 400px ;
-	height : 400px ; 
+	height : 400px ;
+	border-style : solid ;
+	border-color : black ;
+	border-width : 3px ;
+	border-radius : 30px ;	
 }
-#buttonLeft {
+#buttonLeft, #buttonRight {
 	margin : auto ;
 	margin-top : 20px ;
-
 }
 
-#boxRight {
-	margin : /* top */ 0px /* right */ 0px/* bottom */ 0px /* left */ 0px ;
-	width : 49% ;
-	display: flex ;
-	flex-direction: column ;
-	justify-content: center ;
+#bL, #bR {
+	color : #333 ;
+	background-color : #ddd ;
+	font-weight : bold ;
+	font-size : 20px ;
+	height : 50px ;
+	border-style : solid ;
+	border-color : black ;
+	border-width : 3px ;
+	border-radius : 10px ;
 }
-#itemRight {
-	margin : auto ;
-	width : 400px ;
-	height : 400px ; 
+
+#bL:hover, #bR:hover {
+	color : white ;
+	background-color : black ;
 }
-#buttonRight {
-	margin : auto ;
+
+#compute_ACJ {
+	margin-left : 40% ;
+	margin-right : 40% ;
+	margin-top : 50px ;
+	height : 50px ;
+	width : 20% ;
+	color : blue ;
+	font-weight : bold ;
+}
+
+#resetButton {
+	margin-left : 40% ;
+	margin-right : 40% ;
 	margin-top : 20px ;
-
-}
-
-.disp {
-	font-style : bold ;
+	height : 50px ;
+	width : 20% ;
 	color : red ;
-	font-size : 30px ;
+	font-weight : bold ;
+}
+
+#finish {
+	display : none ;
+	margin : auto ;
+	font-size: 56px ;
+	font-family: 'love_ya_like_a_sister_snormal' ;
+	text-align : center ;
+	text-shadow: 1px 2px 4px #000 ;
 }
 
 /*
